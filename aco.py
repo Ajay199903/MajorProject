@@ -138,7 +138,7 @@ def aco(G, GComplete, max_iterations, numAnts, alpha, beta, gamma, rho, eps):
     return G.pheromoneMat
 
 if __name__ == '__main__':
-    edgeList = readEdges('USAir.txt')
+    edgeList = readEdges('/content/MajorProject/USAir.txt')
     edgeList = indexNodes(edgeList)
     edgeList = getLargestComponent(edgeList)
     edgeList = indexNodes(edgeList)
