@@ -3,7 +3,6 @@ import csv
 import random
 import testing_util
 from tqdm import tqdm
-from gwo import GrayWolfOptimizer
 
 def readEdges(fileName):
     edges = []
@@ -176,10 +175,6 @@ if __name__ == '__main__':
     eps = 0.01
     print(alpha, beta, gamma, rho, eps)
     aco(G, GComplete, max_iterations, num_ants, alpha, beta, gamma, rho, eps)
-    
-    num_wolf = 10
-    
-    GrayWolfOptimizer(edgeListTrain,edgeList,num_wolf, max_iterations, alpha, beta ,gamma, rho, eps)
 
 
 '''

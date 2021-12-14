@@ -74,8 +74,12 @@ class Graph:
         return len(self.adjList[a])
 
     def getPathFitness(self, path, C = 0.95):
-        fitness = sum([self.getDegree(i) for i in path]) / self.numNodes
-        return C * fitness
+        # fitness = sum([self.getDegree(i) for i in path]) / self.numNodes
+        # return C * fitness
+        fitness = 0
+        for i in range(1,len(path)):
+            fitness += len(self.getCommonNeigbours(path[i-1],path[i])) / self.numNodes
+        return fitness
     
     def randomNextNode(self, a):
         probability = [0.0 for i in range(self.numNodes)]
@@ -108,7 +112,7 @@ class Graph:
     def precisionScore(self, Goriginal):
 
         auc = self.AUC(Goriginal)
-        edgeList = self.getPredictedLinks(41)
+        edgeList = self.getPredictedLinks(5)
 
         tp, fp = 0, 0 
         mx = 0

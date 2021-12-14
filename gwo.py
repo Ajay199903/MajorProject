@@ -2,10 +2,89 @@ import math
 import random
 import numpy as np
 import copy
+import csv
 import gwo_graph_util
+import testing_util
 from tqdm import tqdm
 
-# Original Gray Wolf Optimizer Alogrithm Implemention
+def readEdges(fileName):
+    edges = []
+
+    with open(fileName, 'r') as file:
+
+        if fileName[-1] == 'v':
+            csvFile = csv.reader(file)
+
+            for line in csvFile:
+                vals = line.split()
+                u, v = int(vals[0]), int(vals[1])
+                edges.append([u, v])
+
+        else:
+            txtFile = file.readlines()
+            for line in txtFile:
+                vals = line.split()
+                u, v = int(vals[0]), int(vals[1])
+                edges.append([u, v])
+
+    return edges
+
+def getLargestComponent(edgeList):
+
+    def dfs(node):
+        vis[node] = clr
+        for i in adj[node]:
+            if vis[i] == 0:
+                dfs(i)
+
+    mxcomp = []
+    mxcompsize = 0
+    mxcompclr = 0
+    N = len(get_unique_nodes(edgeList))
+    vis = [0 for i in range(N)]
+    clr = 1
+    adj = [[] for i in range(N)]
+
+    for i in edgeList:
+        adj[i[0]].append(i[1])
+        adj[i[1]].append(i[0])
+
+    for i in range(N):
+        if vis[i] == 0:
+            dfs(i)
+            clr += 1
+
+    freq = {}
+    for i in vis:
+        if i in freq: freq[i] += 1
+        else: freq[i] = 1
+
+    mxcompsize = max(freq.values())
+    for i in freq:
+        if freq[i] == mxcompsize:
+            mxcompclr = i
+
+    ret = []
+
+    for i in edgeList:
+        if vis[i[0]] == mxcompclr and vis[i[1]] == mxcompclr:
+            ret.append(i)
+
+    return ret
+
+def indexNodes(edgeList):
+
+    unique_nodes = get_unique_nodes(edgeList)
+    node_map = dict()
+
+    for i in range(len(unique_nodes)):
+        node_map[unique_nodes[i]] = i
+
+    for i in range(len(edgeList)):
+        edgeList[i][0] = node_map[edgeList[i][0]]
+        edgeList[i][1] = node_map[edgeList[i][1]]
+
+    return edgeList
 
 def get_unique_nodes(edgeList):
     unique_nodes = set()
@@ -40,6 +119,8 @@ def GrayWolfOptimizer(edgeListTrain,edgeList,num_wolf, max_iterations, alpha, be
     for edge in edgeList:
         GComplete.addEdge(edge[0], edge[1])
         GComplete.addEdge(edge[1], edge[0])
+
+    print("Graph created!")
     
     O_pos = []
     
@@ -159,3 +240,30 @@ def GrayWolfOptimizer(edgeListTrain,edgeList,num_wolf, max_iterations, alpha, be
     print("GWO Completed!")
     
     return A_pos.positionMat
+
+
+if __name__ == '__main__':
+    edgeList = readEdges('/content/MajorProject/USAir.txt')
+    edgeList = indexNodes(edgeList)
+    edgeList = getLargestComponent(edgeList)
+    edgeList = indexNodes(edgeList)
+    random.shuffle(edgeList)
+
+    edgeListTrain, edgeListTest = testing_util.trainTestSplit(edgeList, trainSetSize = 0.9)
+
+    testSetSize = len(edgeListTest)
+    for i in range(testSetSize):
+        edgeListTest.append([edgeListTest[i][1], edgeListTest[i][0]])
+
+    max_iterations = 50
+
+    alpha = 0.4 
+    beta = 0.9
+    gamma = 0.8
+    rho = 0.8
+    eps = 0.01
+    print(alpha, beta, gamma, rho, eps)
+    
+    num_wolf = 10
+    
+    GrayWolfOptimizer(edgeListTrain,edgeList,num_wolf, max_iterations, alpha, beta ,gamma, rho, eps)
