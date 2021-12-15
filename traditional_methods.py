@@ -94,7 +94,7 @@ def indexNodes(edgeList):
 	return edgeList
 
 if __name__ == '__main__':
-	edgeList = readEdges('USAir.txt')
+	edgeList = readEdges('/content/MajorProject/USAir.txt')
 	edgeList = indexNodes(edgeList)
 	edgeList = getLargestComponent(edgeList)
 	edgeList = indexNodes(edgeList)
