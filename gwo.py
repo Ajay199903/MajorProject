@@ -119,6 +119,9 @@ def GrayWolfOptimizer(edgeListTrain,edgeList,num_wolf, max_iterations, alpha, be
     for edge in edgeList:
         GComplete.addEdge(edge[0], edge[1])
         GComplete.addEdge(edge[1], edge[0])
+    
+    print("Total Nodes", GComplete.numNodes)
+    print("Total Edges", len(GComplete.edges))
 
     print("Graph created!")
     
@@ -243,7 +246,8 @@ def GrayWolfOptimizer(edgeListTrain,edgeList,num_wolf, max_iterations, alpha, be
 
 
 if __name__ == '__main__':
-    edgeList = readEdges('/content/MajorProject/USAir.txt')
+    # edgeList = readEdges('/content/MajorProject/USAir.txt')
+    edgeList = readEdges('karate.txt')
     edgeList = indexNodes(edgeList)
     edgeList = getLargestComponent(edgeList)
     edgeList = indexNodes(edgeList)

@@ -16,13 +16,19 @@ class Graph:
         self.gamma = 0
         self.eps = 0
         self.rho = 0
+        self.f_alpha = 0
+        self.f_beta = 0
+        self.f_gamma = 0
 
-    def updateHyperparameters(self, alpha, beta, gamma, rho, eps):
+    def updateHyperparameters(self, alpha, beta, gamma, rho, eps, f_alpha, f_beta, f_gamma):
         self.alpha = alpha
         self.beta = beta
         self.gamma = gamma
         self.rho = rho 
         self.eps = eps
+        self.f_alpha = f_alpha
+        self.f_beta = f_beta
+        self.f_gamma = f_gamma
 
     def addEdge(self, a, b, w = 1):
         self.adjList[a].append((b, w))
@@ -35,12 +41,14 @@ class Graph:
     def initializePositions(self):
         for i in range(self.numNodes):
             for j in range(i,self.numNodes):
-                self.positionMat[i][j] = (self.eta(i,j) + random.random())/(1 + random.random())
+                self.positionMat[i][j] = self.adjMat[i][j] + len(self.getCommonNeigbours(i,j)) * self.alpha
                 self.positionMat[j][i] = self.positionMat[i][j]
 
-    def updatePosition(self, i, j, val):
-        self.positionMat[i][j] = val
-        self.positionMat[j][i] = val
+    def updatePosition(self, i, j):
+        distance = self.positionMat[j][j] - self.positionMat[i][i]
+        self.positionMat[i][j] += self.f_beta * np.exp(-self.f_gamma * distance) * distance + self.f_alpha * self.alpha
+        self.positionMat[j][i] = self.positionMat[i][j]
+        self.positionMat[i][i] *= np.exp(-self.f_gamma * distance)
     
     def copyPosition(self,G):
         for i in range(self.numNodes):
@@ -62,12 +70,15 @@ class Graph:
         return self.gamma * len(self.getCommonNeigbours(a, b))
 
     def getProb(self, a, b):
-        taoVal = self.tao(self.adjMat[a][b])
+        taoVal = self.tao(self.positionMat[a][b])
         etaVal = self.eta(a, b)
 
         return pow(taoVal, self.alpha) * pow(etaVal, self.beta)
     
     def getPosition(self, a, b):
+        return self.positionMat[a][b]
+    
+    def getIntensity(self, a, b):
         return self.positionMat[a][b]
 
     def getDegree(self, a):
@@ -78,7 +89,7 @@ class Graph:
         # return C * fitness
         fitness = 0
         for i in range(1,len(path)):
-            fitness += len(self.getCommonNeigbours(path[i-1],path[i])) / self.numNodes
+            fitness += ( len(self.getCommonNeigbours(path[i-1],path[i])) + 1) / ( min(self.getDegree(path[i-1]) , self.getDegree(path[i])) + 1)
         return fitness
     
     def randomNextNode(self, a):
@@ -111,7 +122,7 @@ class Graph:
     
     def precisionScore(self, Goriginal):
         auc = self.AUC(Goriginal)
-        edgeList = self.getPredictedLinks(3)
+        edgeList = self.getPredictedLinks(7)
 
         tp, fp = 0, 0 
         mx = 0
