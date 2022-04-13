@@ -158,8 +158,8 @@ def Firefly(edgeListTrain,edgeList,num_firefly, max_iterations, alpha, beta ,gam
 
 
 if __name__ == '__main__':
-    # edgeList = readEdges('/content/MajorProject/USAir.txt')
-    edgeList = readEdges('karate.txt')
+    edgeList = readEdges('/content/MajorProject/USAir.txt')
+    # edgeList = readEdges('USAir.txt')
     edgeList = indexNodes(edgeList)
     edgeList = getLargestComponent(edgeList)
     edgeList = indexNodes(edgeList)

@@ -111,7 +111,7 @@ class Graph:
     
     def precisionScore(self, Goriginal):
         auc = self.AUC(Goriginal)
-        edgeList = self.getPredictedLinks(3)
+        edgeList = self.getPredictedLinks(41)
 
         tp, fp = 0, 0 
         mx = 0

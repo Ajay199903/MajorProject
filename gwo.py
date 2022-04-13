@@ -246,8 +246,8 @@ def GrayWolfOptimizer(edgeListTrain,edgeList,num_wolf, max_iterations, alpha, be
 
 
 if __name__ == '__main__':
-    # edgeList = readEdges('/content/MajorProject/USAir.txt')
-    edgeList = readEdges('karate.txt')
+    edgeList = readEdges('/content/MajorProject/USAir.txt')
+    # edgeList = readEdges('karate.txt')
     edgeList = indexNodes(edgeList)
     edgeList = getLargestComponent(edgeList)
     edgeList = indexNodes(edgeList)
